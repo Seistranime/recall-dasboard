@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <title>Recall Agent Trading — Dashboard</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header><h1>Recall Agent Trading — Dashboard</h1></header>
+
+    <section class="trade-form">
+      <h2>Manual Trade</h2>
+      <form id="tradeForm">
+        <label>From Chain:
+          <select id="fromChain">
+            <option value="svm">SVM</option>
+            <option value="evm">EVM</option>
+          </select>
+        </label>
+        <label>From Specific:
+          <select id="fromSpecific">
+            <option value="eth">ETH</option>
+            <option value="base">BASE</option>
+            <option value="bnb">BNB</option>
+            <option value="btc">BTC</option>
+            <option value="arbitrum">Arbitrum</option>
+          </select>
+        </label>
+        <label>To Chain:
+          <select id="toChain">
+            <option value="svm">SVM</option>
+            <option value="evm">EVM</option>
+          </select>
+        </label>
+        <label>To Specific:
+          <select id="toSpecific">
+            <option value="eth">ETH</option>
+            <option value="base">BASE</option>
+            <option value="bnb">BNB</option>
+            <option value="btc">BTC</option>
+            <option value="arbitrum">Arbitrum</option>
+          </select>
+        </label>
+        <label>Choose:
+          <select id="action">
+            <option value="buy">BUY</option>
+            <option value="sell">SELL</option>
+          </select>
+        </label>
+        <label>From Token: <input type="text" id="fromToken" required /></label>
+        <label>To Token: <input type="text" id="toToken" required /></label>
+        <label>Amount: <input type="number" id="amount" required /></label>
+        <label>Reason: <input type="text" id="reason" /></label>
+        <button type="submit">Submit Trade</button>
+      </form>
+    </section>
+
+    <section class="portfolio">
+      <h2>Portfolio</h2>
+      <table id="portfolioTable">
+        <thead><tr>
+          <th>Time</th><th>Action</th><th>From</th><th>To</th><th>Amount</th><th>Reason</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
