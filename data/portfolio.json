@@ -1,5 +1,5 @@
-[
-  {
+{
+  "0": {
     "fromChain": "evm",
     "fromSpecific": "eth",
     "toChain": "evm",
@@ -11,7 +11,7 @@
     "reason": "BOOMER",
     "timestamp": "2025-09-29T19:31:26.257Z"
   },
-  {
+  "1": {
     "fromChain": "evm",
     "fromSpecific": "eth",
     "toChain": "evm",
@@ -22,5 +22,110 @@
     "amount": "1",
     "reason": "BOOMER",
     "timestamp": "2025-09-29T19:31:37.148Z"
+  },
+  "2": {
+    "fromSpecific": "sol",
+    "toSpecific": "sol",
+    "action": "buy",
+    "fromToken": "USDC",
+    "toToken": "ETH",
+    "amount": "1",
+    "reason": "cli-submit",
+    "timestamp": "2025-09-29T19:52:33.030Z"
+  },
+  "trades": [
+    {
+      "id": "t_1759176880052",
+      "timestamp": "2025-09-29T20:14:40.052Z",
+      "fromChain": "evm",
+      "fromSpecific": "eth",
+      "toChain": "evm",
+      "toSpecific": "eth",
+      "action": "buy",
+      "fromToken": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      "toToken": "5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2",
+      "amount": 10,
+      "reason": "",
+      "fee": 0.01,
+      "status": "filled"
+    },
+    {
+      "id": "t_1759176937980",
+      "timestamp": "2025-09-29T20:15:37.980Z",
+      "fromChain": "svm",
+      "fromSpecific": "eth",
+      "toChain": "svm",
+      "toSpecific": "eth",
+      "action": "buy",
+      "fromToken": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      "toToken": "5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2",
+      "amount": 10,
+      "reason": "",
+      "fee": 0.01,
+      "status": "filled"
+    },
+    {
+      "type": "bridge",
+      "id": "bridge_1759177048260",
+      "timestamp": "2025-09-29T20:17:28.260Z",
+      "fromChain": "evm",
+      "fromSpecific": "eth",
+      "toChain": "evm",
+      "toSpecific": "eth",
+      "token": "USDT",
+      "amount": 10,
+      "status": "relayed (simulated)"
+    },
+    {
+      "id": "t_1759177716246",
+      "timestamp": "2025-09-29T20:28:36.245Z",
+      "fromChain": "Ethereum",
+      "fromSpecific": "mainnet",
+      "toChain": "Ethereum",
+      "toSpecific": "arbitrum",
+      "action": "buy",
+      "fromToken": "USDC",
+      "toToken": "ARB",
+      "amount": 100,
+      "reason": "test",
+      "fee": 0.1,
+      "status": "filled"
+    },
+    {
+      "id": "t_1759178104865",
+      "timestamp": "2025-09-29T20:35:04.865Z",
+      "fromChain": "svm",
+      "fromSpecific": "sol",
+      "toChain": "svm",
+      "toSpecific": "sol",
+      "action": "buy",
+      "fromToken": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      "toToken": "5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2",
+      "amount": 10,
+      "reason": "",
+      "fee": 0.01,
+      "status": "filled"
+    },
+    {
+      "id": "t_1759178128479",
+      "timestamp": "2025-09-29T20:35:28.479Z",
+      "fromChain": "svm",
+      "fromSpecific": "sol",
+      "toChain": "svm",
+      "toSpecific": "sol",
+      "action": "buy",
+      "fromToken": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      "toToken": "5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2",
+      "amount": 3000,
+      "reason": "",
+      "fee": 3,
+      "status": "filled"
+    }
+  ],
+  "portfolio": {
+    "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": -3033.03,
+    "5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2": 3030,
+    "USDC": -100.1,
+    "ARB": 100
   }
-]
+}

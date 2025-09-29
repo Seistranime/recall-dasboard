@@ -1,72 +1,195 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="utf-8" />
-  <title>Recall Agent Trading — Dashboard</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link rel="stylesheet" href="styles.css" />
+  <title>Recall — Agent Trading Dashboard (Extended)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #1f2937;
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav a {
+      color: white;
+      margin: 0 10px;
+      text-decoration: none;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      padding: 20px;
+    }
+    .card {
+      background: #fff;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .card h2 {
+      margin-top: 0;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    select, input, button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1e40af;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: left;
+      font-size: 13px;
+    }
+    .metrics p {
+      margin: 5px 0;
+    }
+    .toggle {
+      margin: 5px 0;
+    }
+    footer {
+      grid-column: span 2;
+      text-align: center;
+      padding: 10px;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <header><h1>Recall Agent Trading — Dashboard</h1></header>
 
-    <section class="trade-form">
-      <h2>Manual Trade</h2>
-      <form id="tradeForm">
-        <label>From Chain:
-          <select id="fromChain">
-            <option value="svm">SVM</option>
-            <option value="evm">EVM</option>
-          </select>
-        </label>
-        <label>From Specific:
-          <select id="fromSpecific">
-            <option value="eth">ETH</option>
-            <option value="base">BASE</option>
-            <option value="bnb">BNB</option>
-            <option value="btc">BTC</option>
-            <option value="arbitrum">Arbitrum</option>
-          </select>
-        </label>
-        <label>To Chain:
-          <select id="toChain">
-            <option value="svm">SVM</option>
-            <option value="evm">EVM</option>
-          </select>
-        </label>
-        <label>To Specific:
-          <select id="toSpecific">
-            <option value="eth">ETH</option>
-            <option value="base">BASE</option>
-            <option value="bnb">BNB</option>
-            <option value="btc">BTC</option>
-            <option value="arbitrum">Arbitrum</option>
-          </select>
-        </label>
-        <label>Choose:
-          <select id="action">
-            <option value="buy">BUY</option>
-            <option value="sell">SELL</option>
-          </select>
-        </label>
-        <label>From Token: <input type="text" id="fromToken" required /></label>
-        <label>To Token: <input type="text" id="toToken" required /></label>
-        <label>Amount: <input type="number" id="amount" required /></label>
-        <label>Reason: <input type="text" id="reason" /></label>
-        <button type="submit">Submit Trade</button>
-      </form>
-    </section>
+<header>
+  <h1>Recall Agent Trading Dashboard</h1>
+  <nav>
+    <a href="#">Portfolio</a>
+    <a href="#">Markets</a>
+    <a href="#">Agent</a>
+  </nav>
+  <div>👤</div>
+</header>
 
-    <section class="portfolio">
-      <h2>Portfolio</h2>
-      <table id="portfolioTable">
-        <thead><tr>
-          <th>Time</th><th>Action</th><th>From</th><th>To</th><th>Amount</th><th>Reason</th>
-        </tr></thead>
-        <tbody></tbody>
-      </table>
-    </section>
+<div class="container">
+
+  <!-- Manual Trade -->
+  <div class="card">
+    <h2>Manual Trade</h2>
+    <form id="tradeForm">
+      <label>From Chain</label>
+      <select id="fromChain" required>
+        <option value="evm">EVM</option>
+        <option value="svm">SVM</option>
+      </select>
+
+      <label>From Specific</label>
+      <select id="fromSpecific">
+        <option>eth</option><option>base</option><option>bnb</option><option>btc</option><option>arbitrum</option><option>polygon</option><option>sol</option>
+      </select>
+
+      <label>To Chain</label>
+      <select id="toChain" required>
+        <option value="evm">EVM</option>
+        <option value="svm">SVM</option>
+      </select>
+
+      <label>To Specific</label>
+      <select id="toSpecific">
+        <option>eth</option><option>base</option><option>bnb</option><option>btc</option><option>arbitrum</option><option>polygon</option><option>sol</option>
+      </select>
+
+      <label>Choose</label>
+      <select id="action" required>
+        <option value="buy">Buy</option>
+        <option value="sell">Sell</option>
+      </select>
+
+      <label>From Token</label>
+      <input id="fromToken" placeholder="e.g. USDT" required />
+
+      <label>To Token</label>
+      <input id="toToken" placeholder="e.g. ETH" required />
+
+      <label>Amount</label>
+      <input id="amount" type="number" step="any" required />
+
+      <label>Reason (optional)</label>
+      <input id="reason" placeholder="Alasan trade / catatan" />
+
+      <button type="submit">Submit Trade</button>
+    </form>
   </div>
-  <script src="app.js"></script>
+
+  <!-- Bridge -->
+  <div class="card">
+    <h2>Bridge (Simulated)</h2>
+    <form id="bridgeForm">
+      <label>From Specific</label>
+      <select id="bFromSpecific"><option>eth</option><option>base</option><option>bnb</option><option>polygon</option><option>sol</option></select>
+
+      <label>To Specific</label>
+      <select id="bToSpecific"><option>eth</option><option>base</option><option>bnb</option><option>polygon</option><option>sol</option></select>
+
+      <label>Token</label>
+      <input id="bToken" value="USDT" />
+
+      <label>Amount</label>
+      <input id="bAmount" type="number" step="any" value="10" />
+
+      <button type="submit">Bridge</button>
+    </form>
+  </div>
+
+  <!-- Portfolio -->
+  <div class="card">
+    <h2>Portfolio & Balance</h2>
+    <h3>Wallet Balance: $15,239</h3>
+    <h3>History</h3>
+  </div>
+
+  <!-- Portfolio Manager -->
+  <div class="card">
+    <h2>Portfolio Manager</h2>
+    <div id="portfolioSummary">Memuat...</div>
+    <h3>Riwayat Transaksi</h3>
+    <table id="tradesTable">
+      <thead>
+        <tr><th>Time</th><th>Action</th><th>From</th><th>To</th><th>Amount</th><th>Fee</th><th>Reason</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button id="refreshBtn">Refresh</button>
+    <button id="exportBtn">Export CSV</button>
+  </div>
+
+<script src="/app.js"></script>
 </body>
 </html>
