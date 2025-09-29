@@ -12,16 +12,20 @@ function formatDate(t) {
 
 async function refreshAll() {
   document.getElementById('portfolioSummary').innerText = 'Memuat...';
-  const [tradesRes, portRes] = await Promise.all([api('/api/trades'), api('/api/portfolio')]);
+  const useRecall = document.getElementById('useRecall') && document.getElementById('useRecall').checked;
+  const tradesRes = await api('/api/trades');
+  const portRes = useRecall ? await api('/api/recall/balance') : await api('/api/portfolio');
   const trades = tradesRes.trades || [];
   const portfolio = portRes.portfolio || {};
+  // if recall returns balances in { balances: {...} }
+  const balances = portRes.balances || portfolio;
 
   // portfolio summary
-  const keys = Object.keys(portfolio);
+  const keys = Object.keys(balances);
   if (keys.length === 0) {
     document.getElementById('portfolioSummary').innerText = 'Portfolio kosong';
   } else {
-    const parts = keys.map(k => `${k}: ${Number(portfolio[k]).toFixed(6)}`);
+    const parts = keys.map(k => `${k}: ${Number(balances[k]).toFixed(6)}`);
     document.getElementById('portfolioSummary').innerText = parts.join(' | ');
   }
 
@@ -56,9 +60,11 @@ document.getElementById('tradeForm').addEventListener('submit', async (e) => {
     amount: document.getElementById('amount').value,
     reason: document.getElementById('reason').value.trim()
   };
-  const res = await api('/api/trade', { method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify(payload) });
+  const useRecall = document.getElementById('useRecall') && document.getElementById('useRecall').checked;
+  const endpoint = useRecall ? '/api/recall/trade' : '/api/trade';
+  const res = await api(endpoint, { method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify(payload) });
   if (res.ok) {
-    alert('Trade tercatat (simulated).');
+    alert(useRecall ? 'Trade submitted to Recall.' : 'Trade tercatat (simulated).');
     document.getElementById('tradeForm').reset();
     refreshAll();
   } else {
@@ -82,6 +88,27 @@ document.getElementById('bridgeForm').addEventListener('submit', async (e) => {
     refreshAll();
   } else {
     alert('Bridge error: ' + (res.error || JSON.stringify(res)));
+  }
+});
+
+document.getElementById('fetchRecallBalance').addEventListener('click', async () => {
+  try {
+    const res = await api('/api/recall/balance');
+    if (res.ok) {
+      const bal = res.balances || {};
+      const keys = Object.keys(bal);
+      if (keys.length === 0) {
+        document.getElementById('walletBalance').innerText = '0';
+      } else {
+        // simple USD-like display: sum numeric values
+        const sum = keys.reduce((s,k) => s + (Number(bal[k]) || 0), 0);
+        document.getElementById('walletBalance').innerText = '$' + Number(sum).toFixed(2);
+      }
+    } else {
+      alert('Failed to fetch recall balance: ' + JSON.stringify(res));
+    }
+  } catch (err) {
+    alert('Error fetching recall balance: ' + err.message);
   }
 });
 

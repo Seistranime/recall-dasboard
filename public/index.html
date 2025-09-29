@@ -171,7 +171,11 @@
   <!-- Portfolio -->
   <div class="card">
     <h2>Portfolio & Balance</h2>
-    <h3>Wallet Balance: $15,239</h3>
+    <h3>Wallet Balance: <span id="walletBalance">$15,239</span></h3>
+    <div style="margin-top:8px;">
+      <label class="toggle"><input type="checkbox" id="useRecall"> Use Recall API for live balance/trades</label>
+      <button id="fetchRecallBalance">Fetch Recall Balance</button>
+    </div>
     <h3>History</h3>
   </div>
 

@@ -120,11 +120,26 @@
       "reason": "",
       "fee": 3,
       "status": "filled"
+    },
+    {
+      "id": "t_1759179832324",
+      "timestamp": "2025-09-29T21:03:52.324Z",
+      "fromChain": "evm",
+      "fromSpecific": "eth",
+      "toChain": "evm",
+      "toSpecific": "eth",
+      "action": "buy",
+      "fromToken": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      "toToken": "5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2",
+      "amount": 10,
+      "reason": "Troll",
+      "fee": 0.01,
+      "status": "filled"
     }
   ],
   "portfolio": {
-    "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": -3033.03,
-    "5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2": 3030,
+    "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": -3043.0400000000004,
+    "5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2": 3040,
     "USDC": -100.1,
     "ARB": 100
   }
