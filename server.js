@@ -55,10 +55,47 @@ async function callRecall(path, opts = {}) {
   if (RECALL_API_KEY) headers.Authorization = `Bearer ${RECALL_API_KEY}`;
   const fetchOpts = Object.assign({}, opts, { headers });
   // node fetch compatibility: ensure global fetch exists (node 18+)
-  const res = await fetch(url, fetchOpts);
-  let data;
-  try { data = await res.json(); } catch (e) { data = null; }
-  return { ok: res.ok, status: res.status, data };
+  try {
+    const res = await fetch(url, fetchOpts);
+    let data;
+    try { data = await res.json(); } catch (e) { data = null; }
+    return { ok: res.ok, status: res.status, data };
+  } catch (err) {
+    // Attempt an HTTPS fallback using native https to gather more diagnostics
+    try {
+      const https = require('https');
+      const u = new URL(url);
+      const opts = {
+        hostname: u.hostname,
+        port: u.port || 443,
+        path: u.pathname + (u.search || ''),
+        method: opts && opts.method ? opts.method : 'GET',
+        headers: Object.assign({}, fetchOpts.headers || {}, { 'content-type': (fetchOpts.headers && fetchOpts.headers['content-type']) || 'application/json' }),
+        timeout: 10000
+      };
+      const body = fetchOpts.body || null;
+      const fallbackRes = await new Promise((resolve, reject) => {
+        const req = https.request(opts, (r) => {
+          let chunks = [];
+          r.on('data', (c) => chunks.push(c));
+          r.on('end', () => {
+            const text = Buffer.concat(chunks).toString('utf8');
+            let json = null;
+            try { json = JSON.parse(text); } catch (e) { json = text; }
+            resolve({ ok: r.statusCode >= 200 && r.statusCode < 300, status: r.statusCode, data: json });
+          });
+        });
+        req.on('error', (e) => reject(e));
+        req.on('timeout', () => { req.destroy(new Error('timeout')); });
+        if (body) req.write(body);
+        req.end();
+      });
+      return fallbackRes;
+    } catch (err2) {
+      // don't include Authorization or sensitive headers in logs/returns
+      return { ok: false, status: 'fetch_error', errorMessage: (err2 && err2.message) || String(err2), url };
+    }
+  }
 }
 
 // token mapping helper (loadable from data/token-mapping.json)
@@ -212,20 +249,31 @@ app.post('/api/recall/trade', async (req, res) => {
         // if mapping exists for ticker, use that, otherwise use provided token
         return mapping[t] || t;
       };
-      // basic mapping - adapt as needed to Recall spec
+      // basic mapping - include both snake_case and camelCase variants so we match
+      // different Recall endpoint expectations (some use fromToken/toToken)
+      const resolvedFrom = resolveToken(p.fromToken);
+      const resolvedTo = resolveToken(p.toToken);
+      const amt = Number(p.amount);
       return {
         // Which chain/network - pass through
         chain: p.fromChain || p.chain || 'evm',
+        fromChain: p.fromChain || p.chain || 'evm',
+        toChain: p.toChain || p.chain || 'evm',
         // token identifiers: resolved via token-mapping.json
-        from_token: resolveToken(p.fromToken),
-        to_token: resolveToken(p.toToken),
+        from_token: resolvedFrom,
+        to_token: resolvedTo,
+        // camelCase variants
+        fromToken: resolvedFrom,
+        toToken: resolvedTo,
         // amount expressed as numeric
-        amount: Number(p.amount),
-        // side: buy/sell
+        amount: amt,
+        // side: buy/sell (alias)
         side: p.action || 'buy',
-        // optional fields
+        // optional fields (both variants)
         from_specific: p.fromSpecific,
         to_specific: p.toSpecific,
+        fromSpecific: p.fromSpecific,
+        toSpecific: p.toSpecific,
         reason: p.reason || '',
         // user agent / metadata
         meta: { source: 'recall-dashboard' }
@@ -289,6 +337,13 @@ app.post('/api/recall/trade', async (req, res) => {
     try {
       const safeLog = Object.keys(executeBody).reduce((acc, k) => { acc[k] = typeof executeBody[k] === 'string' || typeof executeBody[k] === 'number' ? executeBody[k] : '[complex]'; return acc; }, {});
       console.log('Calling recall execute with:', JSON.stringify(safeLog));
+      // also persist a copy to data/last_execute_log.json for debugging
+      try {
+        const p = require('path').resolve(__dirname, 'data', 'last_execute_log.json');
+        require('fs').writeFileSync(p, JSON.stringify({ts: new Date().toISOString(), body: safeLog}, null, 2));
+      } catch (e) {
+        // ignore file write errors
+      }
     } catch (e) { /* ignore logging errors */ }
     const recallRes = await callRecall(RECALL_TRADE_PATH, {
       method: 'POST',
@@ -296,7 +351,10 @@ app.post('/api/recall/trade', async (req, res) => {
       body: JSON.stringify(executeBody)
     });
 
-    if (!recallRes.ok) return res.status(502).json({ error: 'recall_error', details: recallRes.data || recallRes.status });
+    if (!recallRes.ok) {
+      const details = recallRes.status === 'fetch_error' ? { errorMessage: recallRes.errorMessage, url: recallRes.url } : (recallRes.data || recallRes.status);
+      return res.status(502).json({ error: 'recall_error', details });
+    }
 
     // record a local copy so UI shows executed trades
     try {
